@@ -9,15 +9,15 @@ export interface Configuration {
    * Placeholder: you can define custom configuration to change the behavior of
    * your graph!
    */
-  modelName: string;
+  model: string;
 }
 
-export function ensureConfiguration(config?: RunnableConfig): Configuration {
+export function ensureConfiguration(config: RunnableConfig): Configuration {
   /**
-   * Create a Configuration instance from a RunnableConfig object.
+   * Pull a default `configurable` field from a RunnableConfig object.
    */
-  const configurable = config?.configurable ?? {};
+  const configurable = config.configurable ?? {};
   return {
-    modelName: configurable.modelName ?? "my-model",
+    model: configurable.model ?? "my-model",
   };
 }

@@ -5,22 +5,68 @@
  */
 
 import { StateGraph } from "@langchain/langgraph";
-import { StateAnnotation, State } from "./state.js";
-import { AIMessage } from "@langchain/core/messages";
+import { StateAnnotation } from "./state.js";
 import { ensureConfiguration } from "./configuration.js";
 import { RunnableConfig } from "@langchain/core/runnables";
 
-// Define nodes, these do the work:
-
-const callModel = async (_state: State, config: RunnableConfig) => {
-  // Do some work... (e.g. call an LLM)
+/**
+ * Define a node, these do the work of the graph and should have most of the logic.
+ * Must return a subset of the properties set in StateAnnotation.
+ * @param state The current state of the graph.
+ * @param config Extra parameters passed into the state graph.
+ * @returns Some subset of parameters of the graph state, used to update the state
+ * for the edges and nodes executed next.
+ */
+const callModel = async (
+  state: typeof StateAnnotation.State,
+  config: RunnableConfig
+): Promise<typeof StateAnnotation.Update> => {
   const configuration = ensureConfiguration(config);
+  /**
+   * Do some work... (e.g. call an LLM)
+   * For example, with LangChain you could do something like:
+   *
+   * ```bash
+   * $ npm i @langchain/anthropic
+   * ```
+   *
+   * ```ts
+   * import { ChatAnthropic } from "@langchain/anthropic";
+   * const model = new ChatAnthropic({
+   *   model: "claude-3-5-sonnet-20240620",
+   *   apiKey: process.env.ANTHROPIC_API_KEY,
+   * });
+   * const res = await model.invoke(state.messages);
+   * ```
+   *                        
+   * Or, with an SDK directly:
+   *
+   * ```bash
+   * $ npm i openai
+   * ```
+   *
+   * ```ts
+   * import OpenAI from "openai";
+   * const openai = new OpenAI({
+   *   apiKey: process.env.OPENAI_API_KEY,
+   * });
+   *
+   * const chatCompletion = await openai.chat.completions.create({
+   *   messages: [{
+   *     role: state.messages[0]._getType(),
+   *     content: state.messages[0].content,
+   *   }],
+   *   model: "gpt-4o-mini",
+   * });
+   * ```
+   */
+  console.log("Current state:", state);
   return {
-    messages: [new AIMessage(`Hi, there! This is ${configuration.modelName}`)],
+    messages: [
+      { role: "assistant", content: `Hi, there! This is ${configuration.model}` }
+    ],
   };
 };
-
-// Define conditional edge logic:
 
 /**
  * Routing function: Determines whether to continue research or end the builder.
@@ -29,7 +75,7 @@ const callModel = async (_state: State, config: RunnableConfig) => {
  * @param state - The current state of the research builder
  * @returns Either "callModel" to continue research or END to finish the builder
  */
-export const _route = (state: State): "__end__" | "callModel" => {
+export const route = (state: typeof StateAnnotation.State): "__end__" | "callModel" => {
   if (state.messages.length > 0) {
     return "__end__";
   }
@@ -50,8 +96,8 @@ const builder = new StateGraph(StateAnnotation)
   // and represent the beginning and end of the builder.
   .addEdge("__start__", "callModel")
   // Conditional edges optionally route to different nodes (or end)
-  //
-  .addConditionalEdges("callModel", _route);
+  .addConditionalEdges("callModel", route);
 
 export const graph = builder.compile();
+
 graph.name = "New Agent";
