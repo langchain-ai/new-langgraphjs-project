@@ -20,7 +20,7 @@ export const StateAnnotation = Annotation.Root({
    * 2. AIMessage with .tool_calls - agent picking tool(s) to use to collect
    *     information
    * 3. ToolMessage(s) - the responses (or errors) from the executed tools
-   * 
+   *
    *     (... repeat steps 2 and 3 as needed ...)
    * 4. AIMessage without .tool_calls - agent responding in unstructured
    *     format to the user.
@@ -28,7 +28,7 @@ export const StateAnnotation = Annotation.Root({
    * 5. HumanMessage - user responds with the next conversational turn.
    *
    *     (... repeat steps 2-5 as needed ... )
-   * 
+   *
    * Merges two lists of messages or message-like objects with role and content,
    * updating existing messages by ID.
    *
@@ -55,5 +55,5 @@ export const StateAnnotation = Annotation.Root({
    * For simple fields whose value should be overwritten by the return value of a node,
    * you don't need to define a reducer or default.
    */
-   // additionalField: Annotation<string>,
+  // additionalField: Annotation<string>,
 });
