@@ -21,13 +21,12 @@
     "test:all": "yarn test && yarn test:int && yarn lint:langgraph"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.1",
-    "@langchain/langgraph": "^0.2.3"
+    "@langchain/core": "^0.3.2",
+    "@langchain/langgraph": "^0.2.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.9.1",
-    "@langchain/openai": "^0.2.7",
     "@tsconfig/recommended": "^1.0.7",
     "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "^5.59.8",
