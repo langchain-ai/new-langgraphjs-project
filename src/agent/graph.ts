@@ -1,13 +1,10 @@
 /**
- * Empty LangGraph Template
- *
+ * Starter LangGraph.js Template
  * Make this code your own!
  */
-
 import { StateGraph } from "@langchain/langgraph";
-import { StateAnnotation } from "./state.js";
-import { ensureConfiguration } from "./configuration.js";
 import { RunnableConfig } from "@langchain/core/runnables";
+import { StateAnnotation } from "./state.js";
 
 /**
  * Define a node, these do the work of the graph and should have most of the logic.
@@ -19,9 +16,8 @@ import { RunnableConfig } from "@langchain/core/runnables";
  */
 const callModel = async (
   state: typeof StateAnnotation.State,
-  config: RunnableConfig,
+  _config: RunnableConfig,
 ): Promise<typeof StateAnnotation.Update> => {
-  const configuration = ensureConfiguration(config);
   /**
    * Do some work... (e.g. call an LLM)
    * For example, with LangChain you could do something like:
@@ -65,7 +61,7 @@ const callModel = async (
     messages: [
       {
         role: "assistant",
-        content: `Hi, there! This is ${configuration.model}`,
+        content: `Hi there! How are you?`,
       },
     ],
   };
