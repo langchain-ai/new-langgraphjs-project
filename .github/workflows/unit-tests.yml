@@ -19,26 +19,64 @@ concurrency:
 
 jobs:
   unit-tests:
-    name: Unit Tests
+    name: Unit Tests (${{ matrix.package-manager }}, ${{ matrix.node-version || 'bun-latest' }})
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node-version: [20.x, 22.x]
+        package-manager: [npm, yarn, pnpm]
+        include:
+          - package-manager: npm
+            install-cmd: npm ci
+            run-prefix: npm run
+            test-cmd: npm test
+            node-cache: npm
+          - package-manager: yarn
+            install-cmd: yarn install --frozen-lockfile
+            run-prefix: yarn
+            test-cmd: yarn test
+            node-cache: yarn
+          - package-manager: pnpm
+            install-cmd: pnpm install
+            run-prefix: pnpm run
+            test-cmd: pnpm test
+            node-cache: pnpm
+          # bun manages its own runtime; added as a standalone combination
+          - package-manager: bun
+            os: ubuntu-latest
+            install-cmd: bun install
+            run-prefix: bun run
+            test-cmd: bun run test
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        if: matrix.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Use Node.js ${{ matrix.node-version }}
+        if: matrix.package-manager != 'bun'
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+          cache: ${{ matrix.node-cache }}
+
+      - name: Setup Bun
+        if: matrix.package-manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
-        run: yarn install --immutable
+        run: ${{ matrix.install-cmd }}
+
       - name: Build project
-        run: yarn build
+        run: ${{ matrix.run-prefix }} build
 
       - name: Lint project
-        run: yarn lint:all
+        run: ${{ matrix.run-prefix }} lint:all
 
       - name: Check README spelling
         uses: codespell-project/actions-codespell@8f01853be192eb0f849a5c7d721450e7a467c579 # v2.2
@@ -53,4 +91,4 @@ jobs:
           path: src/
 
       - name: Run tests
-        run: yarn test
+        run: ${{ matrix.test-cmd }}
