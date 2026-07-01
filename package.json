@@ -21,9 +21,9 @@
     "test:all": "yarn test && yarn test:int && yarn lint:langgraph"
   },
   "dependencies": {
-    "@langchain/core": "^1.1.42",
-    "@langchain/langgraph": "^1.2.9",
-    "zod": "^4.4.2"
+    "@langchain/core": "^1.2.1",
+    "@langchain/langgraph": "^1.4.7",
+    "zod": "^4.4.3"
   },
   "resolutions": {
     "**/filelist/minimatch": "5.1.8"
@@ -40,10 +40,10 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-no-instanceof": "^1.0.1",
-    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-prettier": "^5.5.6",
     "jest": "^29.7.0",
-    "prettier": "^3.8.3",
-    "ts-jest": "^29.4.9",
+    "prettier": "^3.9.4",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.9.3"
   }
 }
